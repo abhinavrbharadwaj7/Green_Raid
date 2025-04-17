@@ -253,33 +253,39 @@ const App = () => {
       case 'stations':
         return (
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4">Nearby Charging</h2>
-            <div className="space-y-3">
+            <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-transparent">
+              Nearby Charging
+            </h2>
+            <div className="space-y-4">
               {stations.map(station => (
                 <motion.div
                   key={station.id}
-                  whileHover={{ y: -3 }}
-                  className={`p-4 rounded-xl flex items-start gap-4 ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm border ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="station-card"
                 >
-                  <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-green-50'}`}>
-                    <FontAwesomeIcon icon={faChargingStation} className={`text-xl ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <h3 className="font-medium">{station.name}</h3>
-                      <span className={`text-xs px-2 py-1 rounded-full ${station.available > 0 ? (darkMode ? 'bg-green-900/30 text-green-400' : 'bg-green-100 text-green-800') : (darkMode ? 'bg-red-900/30 text-red-400' : 'bg-red-100 text-red-800')}`}>
-                        {station.available > 0 ? `${station.available} available` : 'Full'}
-                      </span>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="station-name">{station.name}</h3>
+                      <div className="station-info mt-2">
+                        <FontAwesomeIcon icon={faLocationDot} className="text-emerald-500" />
+                        {station.distance}
+                      </div>
                     </div>
-                    <p className="text-sm opacity-80 mt-1 flex items-center gap-1.5">
-                      <FontAwesomeIcon icon={faLocationDot} className="opacity-60" /> {station.distance}
-                    </p>
-                    <div className="mt-2 flex justify-between text-xs">
-                      <span>{station.speed}</span>
-                      <span className="font-medium">{station.price}</span>
-                    </div>
+                    <span className={`station-badge ${station.available > 0 ? 'available' : 'full'}`}>
+                      {station.available > 0 ? `${station.available} available` : 'Full'}
+                    </span>
                   </div>
-                  <FontAwesomeIcon icon={faChevronRight} className="mt-1.5 opacity-50" />
+                  
+                  <div className="station-specs">
+                    <span className="station-speed">
+                      <FontAwesomeIcon icon={faGauge} className="mr-2" />
+                      {station.speed}
+                    </span>
+                    <span className="station-price">
+                      {station.price}
+                    </span>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -289,30 +295,44 @@ const App = () => {
       case 'testimonials':
         return (
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4">Community Stories</h2>
+            <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+              Community Stories
+            </h2>
             <div className="space-y-4">
               {testimonials.map(testimonial => (
                 <motion.div 
                   key={testimonial.id}
-                  whileHover={{ y: -2 }}
-                  className={`p-4 rounded-xl ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm border ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="testimonial-card"
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="text-2xl">{testimonial.avatar}</div>
-                    <div>
-                      <div className="flex mb-1.5">
-                        {[...Array(5)].map((_, i) => (
-                          <FontAwesomeIcon 
-                            key={i} 
-                            icon={faStar} 
-                            className={`${i < testimonial.rating ? (darkMode ? 'text-yellow-400' : 'text-yellow-500') : (darkMode ? 'text-gray-600' : 'text-gray-300')} mr-1`} 
-                            size="sm"
-                          />
-                        ))}
-                      </div>
-                      <p className="italic">"{testimonial.text}"</p>
-                      <p className="text-sm opacity-80 mt-2">— {testimonial.author}</p>
-                    </div>
+                  <motion.div 
+                    className="testimonial-avatar"
+                    whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {testimonial.avatar}
+                  </motion.div>
+                  
+                  <div className="testimonial-stars">
+                    {[...Array(5)].map((_, i) => (
+                      <motion.span
+                        key={i}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.1 }}
+                      >
+                        <FontAwesomeIcon 
+                          icon={faStar} 
+                          className={`star-icon ${i < testimonial.rating ? 'opacity-100' : 'opacity-30'}`}
+                        />
+                      </motion.span>
+                    ))}
+                  </div>
+
+                  <p className="testimonial-text">"{testimonial.text}"</p>
+                  <div className="testimonial-author">
+                    — {testimonial.author}
                   </div>
                 </motion.div>
               ))}
@@ -379,20 +399,17 @@ const App = () => {
                   { 
                     id: 'home', 
                     label: 'Impact', 
-                    icon: <FontAwesomeIcon icon={faChartLine} size="sm" />,
-                    color: 'from-emerald-400 to-green-500'
+                    icon: <FontAwesomeIcon icon={faChartLine} size="sm" />
                   },
                   { 
                     id: 'stations', 
                     label: 'Stations', 
-                    icon: <FontAwesomeIcon icon={faQrcode} size="sm" />,
-                    color: 'from-cyan-400 to-blue-500'
+                    icon: <FontAwesomeIcon icon={faQrcode} size="sm" />
                   },
                   { 
                     id: 'testimonials', 
                     label: 'Stories', 
-                    icon: <FontAwesomeIcon icon={faThumbsUp} size="sm" />,
-                    color: 'from-purple-400 to-pink-500'
+                    icon: <FontAwesomeIcon icon={faThumbsUp} size="sm" />
                   }
                 ].map(tab => (
                   <motion.button
@@ -422,7 +439,7 @@ const App = () => {
         <footer className={`w-full mt-8 py-4 text-center text-sm ${
           darkMode ? 'text-gray-300' : 'text-gray-500'
         } border-t border-gray-100 dark:border-gray-700`}>
-          © 2024 Deepwoods Green Initiative
+          © 2025 Deepwoods Green Initiative
         </footer>
       </div>
 
@@ -436,5 +453,7 @@ const App = () => {
     </div>
   );
 };
+
+
 
 export default App;
